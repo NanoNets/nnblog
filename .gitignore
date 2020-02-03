@@ -1,3 +1,25 @@
+# this and that
+share/
+lib/
+lib64/
+lib64
+bin/
+*.swp
+pip*.json
+*.cfg
+*.idea
+*.png
+*.pdf
+tmp/
+*.txt
+
+# output files
+features/
+graph/
+graph_adj_matrix/
+
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
