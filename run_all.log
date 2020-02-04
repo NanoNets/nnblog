@@ -1,0 +1,49 @@
+Running feature calculator
+tensorflow version:1.13.1   -   GPU: True
+TrainingParameters(dataset='receipts', model='gcnx_cheby', learning_rate=0.001, epochs=200, hidden1=16, num_hidden_layers=2, dropout=0.6, weight_decay=0.0005, early_stopping=10, max_degree=3, data_split=[0.4, 0.2, 0.4])
+
+Labels:
+Number of Classes: 5
+Number of Labeled Nodes: 3026
+Number of Training Nodes: 1210
+Number of Training Nodes per Class: 242
+
+Features: (33626, 318)
+Adjacency Matrix: (33626, 33626)
+Labels: (33626, 5)
+Calculating Chebyshev polynomials up to order 3...
+16 layer 32
+Epoch: 0001 train_loss= 4.59582 train_acc= 0.50331 val_loss= 1.24911 val_acc= 0.90744 time= 0.89012
+Epoch: 0002 train_loss= 5.76676 train_acc= 0.54463 val_loss= 1.05884 val_acc= 0.93884 time= 0.62636
+Epoch: 0003 train_loss= 4.52988 train_acc= 0.60909 val_loss= 0.90070 val_acc= 0.96198 time= 0.62549
+Epoch: 0004 train_loss= 3.88535 train_acc= 0.61570 val_loss= 0.77479 val_acc= 0.97686 time= 0.61978
+Epoch: 0005 train_loss= 4.00559 train_acc= 0.67025 val_loss= 0.65887 val_acc= 0.98182 time= 0.61848
+Epoch: 0006 train_loss= 3.03587 train_acc= 0.69256 val_loss= 0.54930 val_acc= 0.98843 time= 0.62394
+Epoch: 0007 train_loss= 3.74282 train_acc= 0.71405 val_loss= 0.46569 val_acc= 0.99339 time= 0.61844
+Epoch: 0008 train_loss= 1.92925 train_acc= 0.72479 val_loss= 0.42961 val_acc= 0.99669 time= 0.61335
+Epoch: 0009 train_loss= 1.94596 train_acc= 0.74793 val_loss= 0.39577 val_acc= 0.99835 time= 0.62029
+Epoch: 0010 train_loss= 1.81199 train_acc= 0.79669 val_loss= 0.36575 val_acc= 0.99835 time= 0.61049
+Epoch: 0011 train_loss= 1.71886 train_acc= 0.80331 val_loss= 0.33840 val_acc= 0.99835 time= 0.61162
+Epoch: 0012 train_loss= 1.36275 train_acc= 0.81570 val_loss= 0.31411 val_acc= 0.99835 time= 0.60907
+Epoch: 0013 train_loss= 1.21630 train_acc= 0.84215 val_loss= 0.29247 val_acc= 0.99835 time= 0.61807
+Epoch: 0014 train_loss= 1.10425 train_acc= 0.84876 val_loss= 0.27178 val_acc= 0.99835 time= 0.61061
+Epoch: 0015 train_loss= 1.18580 train_acc= 0.86529 val_loss= 0.25254 val_acc= 0.99835 time= 0.62100
+Epoch: 0016 train_loss= 1.28898 train_acc= 0.87769 val_loss= 0.23423 val_acc= 0.99835 time= 0.62255
+Epoch: 0017 train_loss= 0.70696 train_acc= 0.88843 val_loss= 0.21738 val_acc= 0.99835 time= 0.61040
+Epoch: 0018 train_loss= 0.78176 train_acc= 0.89587 val_loss= 0.20122 val_acc= 0.99835 time= 0.61221
+Epoch: 0019 train_loss= 0.49038 train_acc= 0.90826 val_loss= 0.18615 val_acc= 0.99835 time= 0.61091
+Epoch: 0020 train_loss= 0.81241 train_acc= 0.92231 val_loss= 0.17230 val_acc= 0.99835 time= 0.62296
+Epoch: 0021 train_loss= 0.92798 train_acc= 0.92645 val_loss= 0.16052 val_acc= 1.00000 time= 0.61612
+Epoch: 0022 train_loss= 0.75118 train_acc= 0.91736 val_loss= 0.15338 val_acc= 1.00000 time= 0.61247
+Epoch: 0023 train_loss= 0.55413 train_acc= 0.92810 val_loss= 0.14759 val_acc= 1.00000 time= 0.61375
+Epoch: 0024 train_loss= 0.54725 train_acc= 0.95124 val_loss= 0.14231 val_acc= 1.00000 time= 0.61797
+Epoch: 0025 train_loss= 0.40233 train_acc= 0.94132 val_loss= 0.13747 val_acc= 1.00000 time= 0.61066
+Epoch: 0026 train_loss= 0.71461 train_acc= 0.95455 val_loss= 0.13299 val_acc= 1.00000 time= 0.61206
+Epoch: 0027 train_loss= 0.32142 train_acc= 0.94711 val_loss= 0.12886 val_acc= 1.00000 time= 0.61180
+Epoch: 0028 train_loss= 0.60953 train_acc= 0.95289 val_loss= 0.12511 val_acc= 1.00000 time= 0.61208
+Epoch: 0029 train_loss= 0.43935 train_acc= 0.96116 val_loss= 0.12162 val_acc= 1.00000 time= 0.62228
+Epoch: 0030 train_loss= 0.21692 train_acc= 0.96281 val_loss= 0.11840 val_acc= 1.00000 time= 0.61863
+Epoch: 0031 train_loss= 0.40871 train_acc= 0.96116 val_loss= 0.11539 val_acc= 1.00000 time= 0.61451
+Validation accuracy reached 1.0. Early stopping...
+Optimization Finished!
+Test set results: cost= 0.10774 accuracy= 1.00000 time= 0.36935
