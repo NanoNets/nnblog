@@ -1,6 +1,3 @@
-import warnings
-warnings.filterwarnings(action="ignore", message="^.*deprecated.*$")
-
 from gcn.inits import *
 import tensorflow as tf
 

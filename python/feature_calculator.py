@@ -1,6 +1,7 @@
 # feature calculator
 
 import os
+import sys
 from pathlib import Path
 import json
 from collections import namedtuple
@@ -192,12 +193,10 @@ def run_feature_calculator(normalized_dir, target_dir):
 def main():
 
     # configs for data storage
-    PROJECT_ROOT_PREFIX = "/home/adrian/as/blogs/nanonets"
-
-    NORMALIZED_PREFIX = "invoice-ie-with-gcn/data/normalized/"
+    PROJECT_ROOT_PREFIX = os.path.abspath('../')
+    NORMALIZED_PREFIX = "data/sroie2019/normalized/"
     normalized_dir = os.path.join(PROJECT_ROOT_PREFIX, NORMALIZED_PREFIX)
-
-    FEATURES_PREFIX = "invoice-ie-with-gcn/data/"
+    FEATURES_PREFIX = "data/sroie2019/"
     features_dir = os.path.join(PROJECT_ROOT_PREFIX, FEATURES_PREFIX)
 
     run_feature_calculator(normalized_dir, features_dir)

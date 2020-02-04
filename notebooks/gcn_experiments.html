@@ -13184,6 +13184,7 @@ div#notebook {
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
 <span class="kn">import</span> <span class="nn">cv2</span> 
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
 
 <span class="c1"># python modules</span>
 <span class="kn">from</span> <span class="nn">data_access</span> <span class="k">import</span> <span class="o">*</span>
@@ -13192,7 +13193,8 @@ div#notebook {
 <span class="kn">from</span> <span class="nn">feature_calculator</span> <span class="k">import</span> <span class="o">*</span>
 
 <span class="c1"># Globals</span>
-<span class="kn">from</span> <span class="nn">global_parameters</span> <span class="k">import</span> <span class="n">UNDEFINED</span><span class="p">,</span> <span class="n">WordArea</span>
+<span class="kn">from</span> <span class="nn">global_parameters</span> <span class="k">import</span> <span class="n">UNDEFINED</span><span class="p">,</span> <span class="n">CLASSES</span><span class="p">,</span> <span class="n">WordArea</span><span class="p">,</span> <span class="n">FLAGS</span>
+<span class="n">class2idx</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">CLASSES</span><span class="p">)}</span>
 
 <span class="c1"># configs for data storage</span>
 <span class="n">PROJECT_ROOT_PREFIX</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span>
@@ -13206,6 +13208,14 @@ div#notebook {
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Data-Exploration">Data Exploration<a class="anchor-link" href="#Data-Exploration">&#182;</a></h1><hr>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
@@ -13273,6 +13283,14 @@ div#notebook {
 </ol>
 <p>The input to the pipeline is a dataset as described above, where some of the images have tags (field names) as the ones printed in red on the image above, and other images don't have any tags. The first type of images are called "labeled" images, and the second type are called "unlabeled".</p>
 <p>All the input images have been processed by an OCR engine and therefore there is a word areas text file for each image with bounding boxes around each word.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Feature-Engineering">Feature Engineering<a class="anchor-link" href="#Feature-Engineering">&#182;</a></h1><hr>
 
 </div>
 </div>
@@ -13487,7 +13505,46 @@ div#notebook {
 </ul>
 </li>
 </ul>
-<p>(This process runs from a python script)</p>
+<p>(This process can also be run from a python script)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">run_feature_calculator</span><span class="p">(</span><span class="n">normalized_dir</span><span class="p">,</span> <span class="n">features_dir</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Running feature calculator
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Modeling">Modeling<a class="anchor-link" href="#Modeling">&#182;</a></h1><hr>
 
 </div>
 </div>
@@ -13495,15 +13552,7 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Modeling">Modeling<a class="anchor-link" href="#Modeling">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="GCN-Data-Loader">GCN Data Loader<a class="anchor-link" href="#GCN-Data-Loader">&#182;</a></h2><hr>
-
+<h2 id="Run-Semi-Supervised-Training">Run Semi-Supervised Training<a class="anchor-link" href="#Run-Semi-Supervised-Training">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -13512,11 +13561,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">gcn.utils</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">block_diag</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">sparse</span>
-<span class="kn">from</span> <span class="nn">global_parameters</span> <span class="k">import</span> <span class="n">UNDEFINED</span><span class="p">,</span> <span class="n">CLASSES</span>
-<span class="n">class2idx</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">CLASSES</span><span class="p">)}</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">model_runner</span> <span class="k">import</span> <span class="n">run_gcn_model</span>
 </pre></div>
 
     </div>
@@ -13529,259 +13574,19 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">onehot</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    1-hot encoding. </span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">encoding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)</span>
-    <span class="n">encoding</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="n">encoding</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tensorflow version:</span><span class="si">{}</span><span class="s2">   -   GPU: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">is_gpu_available</span><span class="p">()))</span>
 
-<span class="k">def</span> <span class="nf">encode_labels</span><span class="p">(</span><span class="n">class_indices</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">):</span>
-    <span class="n">encodings</span> <span class="o">=</span> <span class="p">[</span><span class="n">onehot</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">class_indices</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">encodings</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">form_batch</span><span class="p">(</span><span class="n">features_dir</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a single batch with all the graph instances from the training set. For that purpose, </span>
-<span class="sd">    it concatenates all the adjacency matrices into a (sparse) block-diagonal matrix </span>
-<span class="sd">    where each block corresponds to the adjacency matrix of one graph instance.</span>
-<span class="sd">    The individual graph adj matrix can be of different sizes.</span>
-<span class="sd">    </span>
-<span class="sd">    Input: a list of M individual graph examples</span>
-<span class="sd">        - graphs: (list of tuples) a list of length M, where each tuple contains 3 matrices: </span>
-<span class="sd">                    1. feature_matrix (N, 318): represents the nodes of the graph (words)</span>
-<span class="sd">                    2. adjacency_matrix (N, N): represents the edgest of the graph</span>
-<span class="sd">                    3. labels (N, 1): each element represents the category of a node (word tag)</span>
-<span class="sd">    </span>
-<span class="sd">    Output: a single graph containing M non-linkes independent sub-graphs</span>
-<span class="sd">        - batch: (tuple) A single graph represented as a tuple, containing 3 matrices:</span>
-<span class="sd">                    1. feature_matrix (M*N, 318) : concatenation of all the input feature matrices</span>
-<span class="sd">                    2. adjacency_matrix (M*N, M*N): block-diagonal matrix</span>
-<span class="sd">                    3. labels (M*N, 1): concatenation of all the input labels</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">X</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># batch feature matrix</span>
-    <span class="n">A</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># batch adjacency matrix</span>
-    <span class="n">CI</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># batch class indices (labels)</span>
-    
-    <span class="c1"># maps each row in the output feature_matrix back to the individual graph where the row originated</span>
-    <span class="c1"># this allows to pool the predicted node scores back into each independent graph</span>
-    <span class="n">example_ids</span> <span class="o">=</span> <span class="p">[]</span> 
-    
-    <span class="n">feature_files</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">adj_matrix_files</span><span class="p">,</span> <span class="n">entity_fils</span> <span class="o">=</span> <span class="n">get_feature_filepaths</span><span class="p">(</span><span class="n">features_dir</span><span class="p">)</span>
-    
-    <span class="k">for</span> <span class="n">example_id</span><span class="p">,</span> <span class="p">(</span><span class="n">f_file</span><span class="p">,</span> <span class="n">am_file</span><span class="p">,</span> <span class="n">e_file</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">feature_files</span><span class="p">,</span> <span class="n">adj_matrix_files</span><span class="p">,</span> <span class="n">entity_files</span><span class="p">)):</span>
-        <span class="n">features</span><span class="p">,</span> <span class="n">adj_matrix</span> <span class="o">=</span> <span class="n">read_features</span><span class="p">(</span><span class="n">f_file</span><span class="p">,</span> <span class="n">am_file</span><span class="p">)</span>
-        <span class="n">entities</span> <span class="o">=</span> <span class="n">read_normalized_entities</span><span class="p">(</span><span class="n">e_file</span><span class="p">)</span>
-        <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
-        <span class="n">A</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">adj_matrix</span><span class="p">)</span>
-        <span class="n">class_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([[</span><span class="n">class2idx</span><span class="p">[</span><span class="n">entity</span><span class="p">]]</span> <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">])</span> 
-        <span class="n">CI</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">class_indices</span><span class="p">)</span>
-        
-        <span class="n">example_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
-
-    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-    <span class="n">A</span> <span class="o">=</span> <span class="n">block_diag</span><span class="p">(</span><span class="o">*</span><span class="n">A</span><span class="p">)</span>
-    <span class="n">CI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">CI</span><span class="p">)</span>
-    
-    <span class="n">features</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">lil_matrix</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">features</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">CI</span><span class="p">,</span> <span class="n">example_ids</span>
-
-<span class="k">def</span> <span class="nf">split_sets</span><span class="p">(</span><span class="n">class_indices</span><span class="p">,</span> <span class="n">class2idx</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="p">[</span><span class="o">.</span><span class="mi">4</span><span class="p">,</span> <span class="o">.</span><span class="mi">2</span><span class="p">,</span> <span class="o">.</span><span class="mi">4</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Splits the dataset according to a split distribution. </span>
-<span class="sd">    The split is done over the total number of nodes,</span>
-<span class="sd">    regardless of which independent graph example the node belongs to.</span>
-<span class="sd">    </span>
-<span class="sd">    Although the nodes are &quot;logically&quot; split into 3 subsets (train, validation and test), </span>
-<span class="sd">    all the nodes are processed together by the model, so 3 full-sized arrays</span>
-<span class="sd">    of labels are produced, one for each subset, where the labels </span>
-<span class="sd">    from the other subsets are masked (zeros).</span>
-<span class="sd">    </span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># select actual labels (filter UNDEFINED)</span>
-    <span class="n">undefined_idx</span> <span class="o">=</span> <span class="n">class2idx</span><span class="p">[</span><span class="n">UNDEFINED</span><span class="p">]</span>
-    <span class="n">y_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">class_indices</span> <span class="o">!=</span> <span class="n">undefined_idx</span><span class="p">)</span>
-    <span class="n">y_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">y_mask</span><span class="p">)</span> <span class="k">if</span> <span class="n">m</span><span class="p">])</span>
-    
-    <span class="c1"># randomly select from the labeled nodes indices for each split set</span>
-    <span class="n">N</span> <span class="o">=</span> <span class="n">y_idx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">n_train</span><span class="p">,</span> <span class="n">n_val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">N</span><span class="o">*</span><span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">N</span><span class="o">*</span><span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">y_idx</span><span class="p">)</span>
-    <span class="n">idx_train</span> <span class="o">=</span> <span class="n">y_idx</span><span class="p">[:</span><span class="n">n_train</span><span class="p">]</span>
-    <span class="n">idx_val</span> <span class="o">=</span> <span class="n">y_idx</span><span class="p">[</span><span class="n">n_train</span><span class="p">:</span><span class="n">n_train</span> <span class="o">+</span> <span class="n">n_val</span><span class="p">]</span>
-    <span class="n">idx_test</span> <span class="o">=</span> <span class="n">y_idx</span><span class="p">[</span><span class="n">n_train</span> <span class="o">+</span> <span class="n">n_val</span><span class="p">:]</span>
-
-    <span class="c1"># create a matrix of one-hot encoded labels</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">encode_labels</span><span class="p">(</span><span class="n">class_indices</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">class2idx</span><span class="p">))</span>
-    <span class="n">train_mask</span> <span class="o">=</span> <span class="n">sample_mask</span><span class="p">(</span><span class="n">idx_train</span><span class="p">,</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">val_mask</span> <span class="o">=</span> <span class="n">sample_mask</span><span class="p">(</span><span class="n">idx_val</span><span class="p">,</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">test_mask</span> <span class="o">=</span> <span class="n">sample_mask</span><span class="p">(</span><span class="n">idx_test</span><span class="p">,</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-    <span class="n">y_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="n">y_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="n">y_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="n">y_train</span><span class="p">[</span><span class="n">train_mask</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">train_mask</span><span class="p">,</span> <span class="p">:]</span>
-    <span class="n">y_val</span><span class="p">[</span><span class="n">val_mask</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">val_mask</span><span class="p">,</span> <span class="p">:]</span>
-    <span class="n">y_test</span><span class="p">[</span><span class="n">test_mask</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">test_mask</span><span class="p">,</span> <span class="p">:]</span>
-    
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Labels:&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of Classes: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of Labeled Nodes: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of Training Nodes: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_train</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of Training Nodes per Class: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_train</span><span class="o">//</span><span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-
-    <span class="k">return</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">train_mask</span><span class="p">,</span> <span class="n">val_mask</span><span class="p">,</span> <span class="n">test_mask</span>
-
-<span class="k">def</span> <span class="nf">data_loader</span><span class="p">(</span><span class="n">features_dir</span><span class="p">,</span> <span class="n">class2idx</span><span class="p">):</span>
-
-    <span class="n">features</span><span class="p">,</span> <span class="n">adj</span><span class="p">,</span> <span class="n">class_indices</span><span class="p">,</span> <span class="n">example_id</span> <span class="o">=</span> <span class="n">form_batch</span><span class="p">(</span><span class="n">features_dir</span><span class="p">)</span>
-
-    <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">train_mask</span><span class="p">,</span> <span class="n">val_mask</span><span class="p">,</span> <span class="n">test_mask</span> <span class="o">=</span> <span class="n">split_sets</span><span class="p">(</span><span class="n">class_indices</span><span class="p">,</span> <span class="n">class2idx</span><span class="p">)</span>
-    
-    <span class="k">return</span> <span class="n">adj</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">train_mask</span><span class="p">,</span> <span class="n">val_mask</span><span class="p">,</span> <span class="n">test_mask</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="GCN-Model-Runner">GCN Model Runner<a class="anchor-link" href="#GCN-Model-Runner">&#182;</a></h2><hr>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">gcn.models</span> <span class="k">import</span> <span class="n">GCNX</span><span class="p">,</span> <span class="n">GCN</span><span class="p">,</span> <span class="n">MLP</span>
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">is_gpu_available</span><span class="p">())</span>
-<span class="n">tf</span><span class="o">.</span><span class="n">__version__</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>False
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[10]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&#39;1.13.1&#39;</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Set random seed</span>
+<span class="c1"># Set random seed</span>
 <span class="n">seed</span> <span class="o">=</span> <span class="mi">123</span>
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 <span class="n">tf</span><span class="o">.</span><span class="n">set_random_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-</pre></div>
 
-    </div>
-</div>
-</div>
+<span class="nb">print</span><span class="p">(</span><span class="n">FLAGS</span><span class="p">)</span>
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Settings</span>
-<span class="c1"># flags = tf.app.flags</span>
-<span class="c1"># FLAGS = flags.FLAGS</span>
-<span class="c1"># flags.DEFINE_string(&#39;dataset&#39;, &#39;cora&#39;, &#39;Dataset string.&#39;)  # &#39;cora&#39;, &#39;citeseer&#39;, &#39;pubmed&#39;</span>
-<span class="c1"># flags.DEFINE_string(&#39;model&#39;, &#39;gcn&#39;, &#39;Model string.&#39;)  # &#39;gcn&#39;, &#39;gcn_cheby&#39;, &#39;dense&#39;</span>
-<span class="c1"># flags.DEFINE_float(&#39;learning_rate&#39;, 0.01, &#39;Initial learning rate.&#39;)</span>
-<span class="c1"># flags.DEFINE_integer(&#39;epochs&#39;, 200, &#39;Number of epochs to train.&#39;)</span>
-<span class="c1"># flags.DEFINE_integer(&#39;hidden1&#39;, 16, &#39;Number of units in hidden layer 1.&#39;)</span>
-<span class="c1"># flags.DEFINE_float(&#39;dropout&#39;, 0.5, &#39;Dropout rate (1 - keep probability).&#39;)</span>
-<span class="c1"># flags.DEFINE_float(&#39;weight_decay&#39;, 5e-4, &#39;Weight for L2 loss on embedding matrix.&#39;)</span>
-<span class="c1"># flags.DEFINE_integer(&#39;early_stopping&#39;, 10, &#39;Tolerance for early stopping (# of epochs).&#39;)</span>
-<span class="c1"># flags.DEFINE_integer(&#39;max_degree&#39;, 3, &#39;Maximum Chebyshev polynomial degree.&#39;)</span>
-<span class="kn">from</span> <span class="nn">global_parameters</span> <span class="k">import</span> <span class="n">FLAGS</span>
-<span class="n">FLAGS</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[12]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>TrainingParameters(dataset=&#39;receipts&#39;, model=&#39;gcnx_cheby&#39;, learning_rate=0.001, epochs=200, hidden1=16, num_hidden_layers=2, dropout=0.6, weight_decay=0.0005, early_stopping=10, max_degree=3)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Load-data">Load data<a class="anchor-link" href="#Load-data">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">adj</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">train_mask</span><span class="p">,</span> <span class="n">val_mask</span><span class="p">,</span> <span class="n">test_mask</span> <span class="o">=</span> <span class="n">data_loader</span><span class="p">(</span><span class="n">features_dir</span><span class="p">,</span> <span class="n">class2idx</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Features: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">features</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Adjacency Matrix: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">adj</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Labels: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+    <span class="c1">#warnings.filterwarnings(&quot;ignore&quot;, category = DeprecationWarning, module = &quot;tensorflow&quot;)</span>
+    <span class="n">run_gcn_model</span><span class="p">(</span><span class="n">features_dir</span><span class="p">,</span> <span class="n">class2idx</span><span class="p">,</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">data_split</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13798,7 +13603,9 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>
+<pre>tensorflow version:1.13.1   -   GPU: True
+TrainingParameters(dataset=&#39;receipts&#39;, model=&#39;gcnx_cheby&#39;, learning_rate=0.001, epochs=200, hidden1=16, num_hidden_layers=2, dropout=0.6, weight_decay=0.0005, early_stopping=10, max_degree=3, data_split=[0.4, 0.2, 0.4])
+
 Labels:
 Number of Classes: 5
 Number of Labeled Nodes: 3026
@@ -13808,119 +13615,12 @@ Number of Training Nodes per Class: 242
 Features: (33626, 318)
 Adjacency Matrix: (33626, 33626)
 Labels: (33626, 5)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Run-Semi-Supervised-Training">Run Semi-Supervised Training<a class="anchor-link" href="#Run-Semi-Supervised-Training">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Some preprocessing</span>
-<span class="n">features</span> <span class="o">=</span> <span class="n">preprocess_features</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;gcn&#39;</span><span class="p">:</span>
-    <span class="n">support</span> <span class="o">=</span> <span class="p">[</span><span class="n">preprocess_adj</span><span class="p">(</span><span class="n">adj</span><span class="p">)]</span>
-    <span class="n">num_supports</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">model_func</span> <span class="o">=</span> <span class="n">GCN</span>
-<span class="k">elif</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;gcn_cheby&#39;</span><span class="p">:</span>
-    <span class="n">support</span> <span class="o">=</span> <span class="n">chebyshev_polynomials</span><span class="p">(</span><span class="n">adj</span><span class="p">,</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">max_degree</span><span class="p">)</span>
-    <span class="n">num_supports</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">max_degree</span>
-    <span class="n">model_func</span> <span class="o">=</span> <span class="n">GCN</span>
-<span class="k">elif</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;gcnx_cheby&#39;</span><span class="p">:</span>
-    <span class="n">support</span> <span class="o">=</span> <span class="n">chebyshev_polynomials</span><span class="p">(</span><span class="n">adj</span><span class="p">,</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">max_degree</span><span class="p">)</span>
-    <span class="n">num_supports</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">max_degree</span>
-    <span class="n">model_func</span> <span class="o">=</span> <span class="n">GCNX</span>
-<span class="k">elif</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;dense&#39;</span><span class="p">:</span>
-    <span class="n">support</span> <span class="o">=</span> <span class="p">[</span><span class="n">preprocess_adj</span><span class="p">(</span><span class="n">adj</span><span class="p">)]</span>  <span class="c1"># Not used</span>
-    <span class="n">num_supports</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">model_func</span> <span class="o">=</span> <span class="n">MLP</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid argument for model: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">FLAGS</span><span class="o">.</span><span class="n">model</span><span class="p">))</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Calculating Chebyshev polynomials up to order 3...
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Define placeholders</span>
-<span class="n">placeholders</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;support&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">sparse_placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_supports</span><span class="p">)],</span>
-    <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="n">tf</span><span class="o">.</span><span class="n">sparse_placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">features</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int64</span><span class="p">)),</span>
-    <span class="s1">&#39;labels&#39;</span><span class="p">:</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span>
-    <span class="s1">&#39;labels_mask&#39;</span><span class="p">:</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
-    <span class="s1">&#39;dropout&#39;</span><span class="p">:</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder_with_default</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">()),</span>
-    <span class="s1">&#39;num_features_nonzero&#39;</span><span class="p">:</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>  <span class="c1"># helper variable for sparse dropout</span>
-<span class="p">}</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">model_func</span><span class="p">(</span><span class="n">placeholders</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="n">features</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">logging</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>WARNING:tensorflow:From /home/adrian/anaconda3/envs/condayolo/lib/python3.7/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Calculating Chebyshev polynomials up to order 3...
+WARNING:tensorflow:From /home/adrian/anaconda3/envs/condayolo/lib/python3.7/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
 Instructions for updating:
 Colocations handled automatically by placer.
 16 layer 32
-WARNING:tensorflow:From /home/adrian/as/blogs/ie_gcn/nnblog/python/gcn/layers.py:174: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+WARNING:tensorflow:From /home/adrian/as/blogs/ie_gcn/nnblog/python/gcn/layers.py:171: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
 Instructions for updating:
 Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
 WARNING:tensorflow:From /home/adrian/as/blogs/ie_gcn/nnblog/python/gcn/metrics.py:6: softmax_cross_entropy_with_logits (from tensorflow.python.ops.nn_ops) is deprecated and will be removed in a future version.
@@ -13934,121 +13634,40 @@ See `tf.nn.softmax_cross_entropy_with_logits_v2`.
 WARNING:tensorflow:From /home/adrian/anaconda3/envs/condayolo/lib/python3.7/site-packages/tensorflow/python/ops/math_ops.py:3066: to_int32 (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
 Instructions for updating:
 Use tf.cast instead.
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Initialize session</span>
-<span class="n">sess</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
-
-<span class="c1"># Define model evaluation function</span>
-<span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">placeholders</span><span class="p">):</span>
-    <span class="n">t_test</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">feed_dict_val</span> <span class="o">=</span> <span class="n">construct_feed_dict</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">placeholders</span><span class="p">)</span>
-    <span class="n">outs_val</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">model</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">accuracy</span><span class="p">],</span> <span class="n">feed_dict</span><span class="o">=</span><span class="n">feed_dict_val</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">outs_val</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">outs_val</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t_test</span><span class="p">)</span>
-
-
-<span class="c1"># Init variables</span>
-<span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">global_variables_initializer</span><span class="p">())</span>
-
-<span class="n">cost_val</span><span class="p">,</span> <span class="n">acc_val</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
-
-<span class="c1"># Train model</span>
-<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">FLAGS</span><span class="o">.</span><span class="n">epochs</span><span class="p">):</span>
-
-    <span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="c1"># Construct feed dictionary</span>
-    <span class="n">feed_dict</span> <span class="o">=</span> <span class="n">construct_feed_dict</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">train_mask</span><span class="p">,</span> <span class="n">placeholders</span><span class="p">)</span>
-    <span class="n">feed_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">placeholders</span><span class="p">[</span><span class="s1">&#39;dropout&#39;</span><span class="p">]:</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">dropout</span><span class="p">})</span>
-
-    <span class="c1"># Training step</span>
-    <span class="n">outs</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">model</span><span class="o">.</span><span class="n">opt_op</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">accuracy</span><span class="p">],</span> <span class="n">feed_dict</span><span class="o">=</span><span class="n">feed_dict</span><span class="p">)</span>
-
-    <span class="c1"># Validation</span>
-    <span class="n">cost</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">duration</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">y_val</span><span class="p">,</span> <span class="n">val_mask</span><span class="p">,</span> <span class="n">placeholders</span><span class="p">)</span>
-    <span class="n">cost_val</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
-    <span class="n">acc_val</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span>
-
-    <span class="c1"># Print results</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Epoch:&quot;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%04d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;train_loss=&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outs</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-          <span class="s2">&quot;train_acc=&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outs</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="s2">&quot;val_loss=&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cost</span><span class="p">),</span>
-          <span class="s2">&quot;val_acc=&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">acc</span><span class="p">),</span> <span class="s2">&quot;time=&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t</span><span class="p">))</span>
-
-    <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">early_stopping</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">cost_val</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">cost_val</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="n">FLAGS</span><span class="o">.</span><span class="n">early_stopping</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; Validation cost is not improving. Early stopping...&quot;</span><span class="p">)</span>
-            <span class="k">break</span>
-
-        <span class="k">if</span> <span class="mf">1.0</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">acc_val</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="n">FLAGS</span><span class="o">.</span><span class="n">early_stopping</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Validation accuracy reached 1.0. Early stopping...&quot;</span><span class="p">)</span>
-            <span class="k">break</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimization Finished!&quot;</span><span class="p">)</span>
-
-<span class="c1"># Testing</span>
-<span class="n">test_cost</span><span class="p">,</span> <span class="n">test_acc</span><span class="p">,</span> <span class="n">test_duration</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">test_mask</span><span class="p">,</span> <span class="n">placeholders</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test set results:&quot;</span><span class="p">,</span> <span class="s2">&quot;cost=&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_cost</span><span class="p">),</span>
-      <span class="s2">&quot;accuracy=&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_acc</span><span class="p">),</span> <span class="s2">&quot;time=&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_duration</span><span class="p">))</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Epoch: 0001 train_loss= 4.59582 train_acc= 0.50331 val_loss= 1.24911 val_acc= 0.90744 time= 1.06371
-Epoch: 0002 train_loss= 5.76676 train_acc= 0.54463 val_loss= 1.05884 val_acc= 0.93884 time= 0.94997
-Epoch: 0003 train_loss= 4.52987 train_acc= 0.60909 val_loss= 0.90070 val_acc= 0.96198 time= 0.90574
-Epoch: 0004 train_loss= 3.88535 train_acc= 0.61570 val_loss= 0.77479 val_acc= 0.97686 time= 0.95925
-Epoch: 0005 train_loss= 4.00559 train_acc= 0.67025 val_loss= 0.65887 val_acc= 0.98182 time= 0.91670
-Epoch: 0006 train_loss= 3.03587 train_acc= 0.69256 val_loss= 0.54930 val_acc= 0.98843 time= 0.91692
-Epoch: 0007 train_loss= 3.74282 train_acc= 0.71405 val_loss= 0.46569 val_acc= 0.99339 time= 0.94989
-Epoch: 0008 train_loss= 1.92925 train_acc= 0.72479 val_loss= 0.42961 val_acc= 0.99669 time= 0.94215
-Epoch: 0009 train_loss= 1.94596 train_acc= 0.74793 val_loss= 0.39577 val_acc= 0.99835 time= 0.99061
-Epoch: 0010 train_loss= 1.81199 train_acc= 0.79669 val_loss= 0.36575 val_acc= 0.99835 time= 0.94403
-Epoch: 0011 train_loss= 1.71886 train_acc= 0.80331 val_loss= 0.33840 val_acc= 0.99835 time= 0.93839
-Epoch: 0012 train_loss= 1.36274 train_acc= 0.81570 val_loss= 0.31411 val_acc= 0.99835 time= 0.91628
-Epoch: 0013 train_loss= 1.21630 train_acc= 0.84215 val_loss= 0.29247 val_acc= 0.99835 time= 0.93905
-Epoch: 0014 train_loss= 1.10425 train_acc= 0.84876 val_loss= 0.27178 val_acc= 0.99835 time= 0.91303
-Epoch: 0015 train_loss= 1.18580 train_acc= 0.86529 val_loss= 0.25254 val_acc= 0.99835 time= 0.90121
-Epoch: 0016 train_loss= 1.28898 train_acc= 0.87769 val_loss= 0.23423 val_acc= 0.99835 time= 0.88752
-Epoch: 0017 train_loss= 0.70696 train_acc= 0.88843 val_loss= 0.21738 val_acc= 0.99835 time= 0.91217
-Epoch: 0018 train_loss= 0.78176 train_acc= 0.89587 val_loss= 0.20122 val_acc= 0.99835 time= 0.89551
-Epoch: 0019 train_loss= 0.49038 train_acc= 0.90826 val_loss= 0.18615 val_acc= 0.99835 time= 0.93042
-Epoch: 0020 train_loss= 0.81242 train_acc= 0.92231 val_loss= 0.17230 val_acc= 0.99835 time= 0.93159
-Epoch: 0021 train_loss= 0.92798 train_acc= 0.92645 val_loss= 0.16052 val_acc= 1.00000 time= 0.90400
-Epoch: 0022 train_loss= 0.75118 train_acc= 0.91736 val_loss= 0.15338 val_acc= 1.00000 time= 0.91114
-Epoch: 0023 train_loss= 0.55413 train_acc= 0.92810 val_loss= 0.14759 val_acc= 1.00000 time= 0.92884
-Epoch: 0024 train_loss= 0.54725 train_acc= 0.95124 val_loss= 0.14231 val_acc= 1.00000 time= 0.94781
-Epoch: 0025 train_loss= 0.40233 train_acc= 0.94132 val_loss= 0.13747 val_acc= 1.00000 time= 0.90869
-Epoch: 0026 train_loss= 0.71461 train_acc= 0.95455 val_loss= 0.13299 val_acc= 1.00000 time= 0.91933
-Epoch: 0027 train_loss= 0.32142 train_acc= 0.94711 val_loss= 0.12886 val_acc= 1.00000 time= 0.90087
-Epoch: 0028 train_loss= 0.60953 train_acc= 0.95289 val_loss= 0.12511 val_acc= 1.00000 time= 0.90421
-Epoch: 0029 train_loss= 0.43935 train_acc= 0.96116 val_loss= 0.12162 val_acc= 1.00000 time= 0.91924
-Epoch: 0030 train_loss= 0.21692 train_acc= 0.96281 val_loss= 0.11840 val_acc= 1.00000 time= 0.93335
-Epoch: 0031 train_loss= 0.40871 train_acc= 0.96116 val_loss= 0.11539 val_acc= 1.00000 time= 0.93536
+Epoch: 0001 train_loss= 4.59582 train_acc= 0.50331 val_loss= 1.24910 val_acc= 0.90744 time= 0.90494
+Epoch: 0002 train_loss= 5.76676 train_acc= 0.54463 val_loss= 1.05884 val_acc= 0.93884 time= 0.63730
+Epoch: 0003 train_loss= 4.52988 train_acc= 0.60909 val_loss= 0.90070 val_acc= 0.96198 time= 0.63676
+Epoch: 0004 train_loss= 3.88535 train_acc= 0.61570 val_loss= 0.77479 val_acc= 0.97686 time= 0.62156
+Epoch: 0005 train_loss= 4.00559 train_acc= 0.67025 val_loss= 0.65887 val_acc= 0.98182 time= 0.62643
+Epoch: 0006 train_loss= 3.03587 train_acc= 0.69256 val_loss= 0.54930 val_acc= 0.98843 time= 0.63585
+Epoch: 0007 train_loss= 3.74282 train_acc= 0.71405 val_loss= 0.46569 val_acc= 0.99339 time= 0.63807
+Epoch: 0008 train_loss= 1.92925 train_acc= 0.72479 val_loss= 0.42961 val_acc= 0.99669 time= 0.62866
+Epoch: 0009 train_loss= 1.94596 train_acc= 0.74793 val_loss= 0.39577 val_acc= 0.99835 time= 0.62343
+Epoch: 0010 train_loss= 1.81199 train_acc= 0.79669 val_loss= 0.36575 val_acc= 0.99835 time= 0.62570
+Epoch: 0011 train_loss= 1.71886 train_acc= 0.80331 val_loss= 0.33840 val_acc= 0.99835 time= 0.62254
+Epoch: 0012 train_loss= 1.36275 train_acc= 0.81570 val_loss= 0.31411 val_acc= 0.99835 time= 0.62604
+Epoch: 0013 train_loss= 1.21630 train_acc= 0.84215 val_loss= 0.29247 val_acc= 0.99835 time= 0.62529
+Epoch: 0014 train_loss= 1.10425 train_acc= 0.84876 val_loss= 0.27178 val_acc= 0.99835 time= 0.62845
+Epoch: 0015 train_loss= 1.18580 train_acc= 0.86529 val_loss= 0.25254 val_acc= 0.99835 time= 0.62417
+Epoch: 0016 train_loss= 1.28898 train_acc= 0.87769 val_loss= 0.23423 val_acc= 0.99835 time= 0.62251
+Epoch: 0017 train_loss= 0.70696 train_acc= 0.88843 val_loss= 0.21738 val_acc= 0.99835 time= 0.61987
+Epoch: 0018 train_loss= 0.78176 train_acc= 0.89587 val_loss= 0.20122 val_acc= 0.99835 time= 0.61782
+Epoch: 0019 train_loss= 0.49038 train_acc= 0.90826 val_loss= 0.18615 val_acc= 0.99835 time= 0.62222
+Epoch: 0020 train_loss= 0.81241 train_acc= 0.92231 val_loss= 0.17230 val_acc= 0.99835 time= 0.64321
+Epoch: 0021 train_loss= 0.92798 train_acc= 0.92645 val_loss= 0.16052 val_acc= 1.00000 time= 0.62329
+Epoch: 0022 train_loss= 0.75118 train_acc= 0.91736 val_loss= 0.15338 val_acc= 1.00000 time= 0.62732
+Epoch: 0023 train_loss= 0.55413 train_acc= 0.92810 val_loss= 0.14759 val_acc= 1.00000 time= 0.61826
+Epoch: 0024 train_loss= 0.54725 train_acc= 0.95124 val_loss= 0.14231 val_acc= 1.00000 time= 0.61948
+Epoch: 0025 train_loss= 0.40233 train_acc= 0.94132 val_loss= 0.13747 val_acc= 1.00000 time= 0.62120
+Epoch: 0026 train_loss= 0.71461 train_acc= 0.95455 val_loss= 0.13299 val_acc= 1.00000 time= 0.62849
+Epoch: 0027 train_loss= 0.32142 train_acc= 0.94711 val_loss= 0.12886 val_acc= 1.00000 time= 0.62838
+Epoch: 0028 train_loss= 0.60953 train_acc= 0.95289 val_loss= 0.12511 val_acc= 1.00000 time= 0.62120
+Epoch: 0029 train_loss= 0.43935 train_acc= 0.96116 val_loss= 0.12162 val_acc= 1.00000 time= 0.62396
+Epoch: 0030 train_loss= 0.21692 train_acc= 0.96281 val_loss= 0.11840 val_acc= 1.00000 time= 0.62379
+Epoch: 0031 train_loss= 0.40871 train_acc= 0.96116 val_loss= 0.11539 val_acc= 1.00000 time= 0.61839
 Validation accuracy reached 1.0. Early stopping...
 Optimization Finished!
-Test set results: cost= 0.10774 accuracy= 1.00000 time= 0.53488
+Test set results: cost= 0.10774 accuracy= 1.00000 time= 0.37699
 </pre>
 </div>
 </div>

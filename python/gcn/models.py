@@ -1,6 +1,3 @@
-import warnings
-warnings.filterwarnings(action="ignore", message="^.*deprecated.*$")
-
 from gcn.layers import *
 from gcn.metrics import *
 

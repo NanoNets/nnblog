@@ -1,6 +1,3 @@
-import warnings
-warnings.filterwarnings(action="ignore", message="^.*deprecated.*$")
-
 import numpy as np
 import pickle as pkl
 import networkx as nx
