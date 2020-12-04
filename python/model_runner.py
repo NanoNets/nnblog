@@ -20,7 +20,7 @@ def onehot(idx, num_classes):
     1-hot encoding. 
     """
     encoding = np.zeros(num_classes)
-    encoding[1] = 1
+    encoding[1] = idx
     return encoding
 
 def encode_labels(class_indices, num_classes):
@@ -29,20 +29,20 @@ def encode_labels(class_indices, num_classes):
 
 def form_batch(features_dir, class2idx):
     """
-    Creates a single batch with all the graph instances from the training set. For that purpose, 
-    it concatenates all the adjacency matrices into a (sparse) block-diagonal matrix 
-    where each block corresponds to the adjacency matrix of one graph instance.
-    The individual graph adj matrix can be of different sizes.
+    Creates a single batch with all the graph instances from the training set. 
+    For that purpose, it concatenates all the adjacency matrices into a (sparse)
+    block-diagonal matrix, where each block corresponds to the adjacency matrix 
+    of one graph instance. The input graph adj matrices can be of different sizes.
     
     Input: a list of M individual graph examples
-        - graphs: (list of tuples) a list of length M, where each tuple contains 3 matrices: 
-                    1. feature_matrix (N, 318): represents the nodes of the graph (words)
-                    2. adjacency_matrix (N, N): represents the edgest of the graph
-                    3. labels (N, 1): each element represents the category of a node (word tag)
+        - graphs: (list of tuples) each tuple contains 3 matrices: 
+                    1. feature_matrix (N, 318): the nodes of the graph (words)
+                    2. adjacency_matrix (N, N): the edges of the graph
+                    3. labels (N, 1): the class of each node (entity)
     
-    Output: a single graph containing M non-linkes independent sub-graphs
-        - batch: (tuple) A single graph represented as a tuple, containing 3 matrices:
-                    1. feature_matrix (M*N, 318) : concatenation of all the input feature matrices
+    Output: a single graph containing M non-linked independent sub-graphs
+        - batch: (tuple) A graph, it consists of 3 matrices:
+                    1. feature_matrix (M*N, 318) : concatenation of input features
                     2. adjacency_matrix (M*N, M*N): block-diagonal matrix
                     3. labels (M*N, 1): concatenation of all the input labels
     """
@@ -50,11 +50,13 @@ def form_batch(features_dir, class2idx):
     A = []  # batch adjacency matrix
     CI = []  # batch class indices (labels)
     
-    # maps each row in the output feature_matrix back to the individual graph where the row originated
-    # this allows to pool the predicted node scores back into each independent graph
+    # A numeri id maps each row in the output feature_matrix back to 
+    # the individual graph where the row originated, this allows to
+    # map the predicted node scores back into each input graph
     example_ids = [] 
     
-    feature_files, _, adj_matrix_files, entity_files = get_feature_filepaths(features_dir)
+    feature_files, _, adj_matrix_files, entity_files =\
+    get_feature_filepaths(features_dir)
     
     for example_id, (f_file, am_file, e_file) in enumerate(zip(feature_files, adj_matrix_files, entity_files)):
         features, adj_matrix = read_features(f_file, am_file)

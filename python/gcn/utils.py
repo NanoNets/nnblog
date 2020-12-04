@@ -147,7 +147,8 @@ def construct_feed_dict(features, support, labels, labels_mask, placeholders):
 
 
 def chebyshev_polynomials(adj, k):
-    """Calculate Chebyshev polynomials up to order k. Return a list of sparse matrices (tuple representation)."""
+    """Calculate Chebyshev polynomials up to order k. 
+    Return a list of sparse matrices (tuple representation)."""
     print("Calculating Chebyshev polynomials up to order {}...".format(k))
 
     adj_normalized = normalize_adj(adj)

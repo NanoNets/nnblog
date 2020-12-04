@@ -30,12 +30,12 @@ from data_access import *
 from graph_modeler import *
 
 #### Text Features
-
+# -------------------------------------------------------------------------
 def get_word_bpe(word, bpemb_en):
     """
-    Get pretrained subword embeddings created with 
-    the Byte-Pair Encoding (BPE) algorithm.
-    If the word is segmented in more than 3 subwords we truncated at 3.
+    Gets pre-trained sub-word embeddings created with 
+    the Byte Pair Encoding (BPE) algorithm.
+    If the word is segmented in more than 3 subwords, truncates at 3.
     The length of each subword embedding is 100.
     """
     
@@ -58,7 +58,6 @@ def get_word_bpe(word, bpemb_en):
 
 #### Binary Features
 # -------------------------------------------------------------------------
-
 def isDate(word, fuzzy=False):
     """
     Return whether the word can be interpreted as a date.
@@ -147,7 +146,10 @@ def get_word_binary_features(word, debug=False):
 # -------------------------------------------------------------------------
 def get_word_area_numeric_features(word_area, graph):
     """
-    Fill the "undefined" values with the null distance (0)
+    Extracts numeric features from the graph: returns 4 floats 
+    between -1 and 1 that represent the the relative distance 
+    to the nearest neighbour in each of the four main directions.
+    Fills the "undefined" values with the null distance (0)
     """
     edges = graph[word_area.idx]
     
